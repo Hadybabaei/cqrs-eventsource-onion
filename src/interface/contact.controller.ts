@@ -1,13 +1,24 @@
-import { Controller, Post, Body, Get, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Put,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { ContactService } from 'src/application/contact.service';
+import { CreateContactDto } from './dto/create-contact.dto';
 
 @Controller('contacts')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
   @Post()
-  async create(@Body() createContactDto: { name: string; lastname: string }) {
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async create(@Body() createContactDto: CreateContactDto) {
     await this.contactService.createContact({
       _id: randomUUID(),
       name: createContactDto.name,
@@ -27,8 +38,8 @@ export class ContactController {
     });
   }
 
-    @Get(':id')
-    async getContact(@Param('id') id: string) {
-      return await this.contactService.getContactById(id);
-    }
+  @Get(':id')
+  async getContact(@Param('id') id: string) {
+    return await this.contactService.getContactById(id);
+  }
 }
