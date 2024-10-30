@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Contact } from 'src/domain/contact.entity';
+import { Contact } from 'src/domain/contact';
 
 @Injectable()
 export class ContactCreatedEvent {

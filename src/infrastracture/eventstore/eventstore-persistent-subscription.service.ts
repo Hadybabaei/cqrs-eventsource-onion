@@ -26,7 +26,6 @@ export class EventStorePersistentSubscriptionService implements OnModuleInit {
       );
       this.logger.log(`Persistent subscription group '${groupName}' created on stream '${streamName}'.`);
     } catch (error) {
-       // console.log(error)
       if (error.type === 'persistent-subscription-exists') {
         console.log(`Persistent subscription group '${groupName}' already exists on stream '${streamName}', proceeding with connection.`);
       } else {

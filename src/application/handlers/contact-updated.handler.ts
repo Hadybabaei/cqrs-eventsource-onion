@@ -1,6 +1,6 @@
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { ContactUpdatedEvent } from '../contact-updated.event';
-import { ContactRepository } from 'src/domain/contact.repository';
+import { ContactUpdatedEvent } from '../events/contact-updated.event';
+import { ContactRepository } from 'src/application/contact-repository.interface';
 import { Inject } from '@nestjs/common';
 import { Contact } from 'src/infrastracture/mongodb/schemas/contact.schema';
 

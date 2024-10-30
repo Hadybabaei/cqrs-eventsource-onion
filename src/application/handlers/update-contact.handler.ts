@@ -1,11 +1,13 @@
-import { Contact } from 'src/domain/contact.entity';
-import { UpdateContactCommand } from '../update-contact.command';
+import { Contact } from 'src/domain/contact';
+import { UpdateContactCommand } from '../commands/update-contact.command';
 import { ContactEventSourcingService } from 'src/infrastracture/eventsource/contact-event-sourcing.service';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
 import { ContactUpdatedEvent } from 'src/application/events/contact-updated.event';
 
 @CommandHandler(UpdateContactCommand)
-export class UpdateContactHandler implements ICommandHandler {
+export class UpdateContactHandler
+  implements ICommandHandler<UpdateContactCommand>
+{
   constructor(
     private readonly eventSourcingService: ContactEventSourcingService,
     private readonly eventBus: EventBus,
@@ -13,15 +15,20 @@ export class UpdateContactHandler implements ICommandHandler {
 
   async execute(command: UpdateContactCommand): Promise<void> {
     const events = await this.eventSourcingService.getEvents(command._id);
-    const contact = Contact.rehydrateContact(events);
-    this.validateUpdate(contact);
-    const updatedEvent = new ContactUpdatedEvent(
-      command._id,
-      command.name,
-      command.lastname,
+    const contact = Contact.rehydrate(
+      events,
+      this.eventSourcingService,
+      this.eventBus,
     );
-    await this.eventSourcingService.saveEvents(command._id, [updatedEvent]);
-    await this.eventBus.publish(updatedEvent);
+
+    this.validateUpdate(contact);
+
+    if (command.name) {
+      await contact.updateContactName(command.name);
+    }
+    if (command.lastname) {
+      await contact.updateContactLastname(command.lastname);
+    }
   }
 
   private validateUpdate(contact: Contact): void {

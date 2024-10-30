@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { GetContactQuery } from '../get-contact.query';
-import { ContactRepository } from 'src/domain/contact.repository';
+import { GetContactQuery } from '../queries/get-contact.query';
+import { ContactRepository } from 'src/application/contact-repository.interface';
 import { Inject } from '@nestjs/common';
 import { Contact } from 'src/infrastracture/mongodb/schemas/contact.schema';
 
@@ -14,7 +14,6 @@ export class GetContactQueryHandler implements IQueryHandler<GetContactQuery> {
   async execute(query: GetContactQuery): Promise<Contact | null> {
     const contact = await this.contactRepository.findById(query.id);
     if (!contact) return null;
-
-    return { _id: contact._id, name: contact.name, lastname: contact.lastname };
+    return contact;
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Contact, ContactDocument } from '../schemas/contact.schema';
-import { ContactRepository } from 'src/domain/contact.repository';
+import { ContactRepository } from 'src/application/contact-repository.interface';
 import { Model } from 'mongoose';
 
 import { InjectModel } from '@nestjs/mongoose';
